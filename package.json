@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "dev": "nodemon src/index",
+    "start": "node src/index.js"
+  },
+  "name": "appPeru",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "hector <polbarazorda@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
