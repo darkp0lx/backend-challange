@@ -1,5 +1,6 @@
-const app = require('./app')
+require('./mongo')
 const express = require('express')
+const app = require('./app')
 
 app.use(express.json())
 const PORT = 4002

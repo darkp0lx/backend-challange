@@ -7,13 +7,7 @@ const userSchema = new Schema({
     unique: true
   },
   name: String,
-  passwordHash: String,
-  info: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Perfil'
-    }
-  ]
+  passwordHash: String
 })
 
 userSchema.set('toJSON', {
