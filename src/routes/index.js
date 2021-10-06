@@ -51,4 +51,23 @@ router.post('/api/users', async (req, res, next) => {
   }
 })
 
+/* method put (update information to user)*/
+router.put('/api/users/:id', async (req, res) => {
+  const id = req.params.id
+  const { email, password, names, lastNames, numberPhone, birthday } = req.query
+  const userUpdated = {
+    id: id,
+    password: password,
+    email: email,
+    names: names,
+    lastNames: lastNames,
+    birthday: birthday,
+    numberPhone: numberPhone
+  }
+
+  User.findByIdAndUpdate(id, userUpdated, { new: true }).then(response =>
+    res.json(response)
+  )
+})
+
 module.exports = router
