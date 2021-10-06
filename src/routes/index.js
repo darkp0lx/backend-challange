@@ -70,4 +70,21 @@ router.put('/api/users/:id', async (req, res) => {
   )
 })
 
+/* method put (delete the user)*/
+router.delete('/api/users/:id', async (req, res) => {
+  const id = req.params.id
+
+  const userFind = await User.findByIdAndDelete(id)
+  if (userFind) {
+    res
+      .status(202)
+      .json({
+        status: 'user eliminado!!!!'
+      })
+      .end()
+  } else {
+    res.status(404).json({ status: 'ese usuario no existe' })
+  }
+})
+
 module.exports = router
