@@ -3,7 +3,10 @@ const express = require('express')
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const cors = require('cors')
 /* method get (get all users) */
+userRouter.use(cors())
+
 userRouter.use(express.json())
 userRouter.get('/', async (req, res) => {
   try {
@@ -77,6 +80,7 @@ userRouter.put('/:id', async (req, res) => {
     birthday,
     sede
   } = req.body
+
   const userUpdated = {
     id: id,
     password: password,
@@ -90,28 +94,12 @@ userRouter.put('/:id', async (req, res) => {
     sede: sede
   }
 
-  let token = null
-
-  const authorization = req.get('authorization')
-  if (authorization && authorization.lowerCase().startsWith('bearer')) {
-    token = authorization.substring(7)
-  }
-
-  const decodedToken = jwt.verify(token, 'develop')
-
-  if (!token || decodedToken.id) {
-    return res.status(401).json({
-      error: 'se require tokeen'
-    })
-  }
-
-  console.log(userUpdated, 'update')
   User.findByIdAndUpdate(id, userUpdated, { new: true }).then(response =>
     res.json(response)
   )
 })
 
-/* method put (delete the user)*/
+/* method delete (delete the user)*/
 userRouter.delete('/:id', async (req, res) => {
   const id = req.params.id
 

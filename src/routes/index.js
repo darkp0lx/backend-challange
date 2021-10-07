@@ -1,8 +1,6 @@
-const cors = require('cors')
 const router = Router()
 
 router.use(express.json())
-router.use(cors())
 
 router.get('/', (req, res) => {
   res.json({ message: 'hola mundo' })
