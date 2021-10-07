@@ -1,4 +1,6 @@
 require('./mongo')
+require('dotenv').config()
+
 const express = require('express')
 const app = require('./app')
 const notFound = require('./middleware/notFound.js')
@@ -10,7 +12,7 @@ app.use(express.json())
 app.use(notFound)
 app.use(handleErrors)
 
-const PORT = 4002
+const PORT = process.env.PORT || 4002
 
 const server = app.listen(PORT, () => {
   console.log('Server listening on ' + PORT)
