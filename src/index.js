@@ -1,8 +1,14 @@
 require('./mongo')
 const express = require('express')
 const app = require('./app')
+const notFound = require('./middleware/notFound.js')
+const handleErrors = require('./middleware/handleErrors.js')
 
 app.use(express.json())
+
+app.use(notFound)
+app.use(handleErrors)
+
 const PORT = 4002
 
 const server = app.listen(PORT, () => {

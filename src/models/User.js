@@ -10,7 +10,10 @@ const userSchema = new Schema({
   names: String,
   lastNames: String,
   birthday: String,
-  numberPhone: Number
+  numberPhone: Number,
+  image: String,
+  cargo: String,
+  sede: String
 })
 
 userSchema.set('toJSON', {

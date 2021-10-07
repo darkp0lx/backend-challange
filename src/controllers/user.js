@@ -1,25 +1,21 @@
-const cors = require('cors')
-const router = Router()
-
-router.use(express.json())
-router.use(cors())
-
-router.get('/', (req, res) => {
-  res.json({ message: 'hola mundo' })
-})
-
+const userRouter = require('express').Router()
+const express = require('express')
+const User = require('../models/User')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 /* method get (get all users) */
-router.get('/api/users', async (req, res) => {
+userRouter.use(express.json())
+userRouter.get('/', async (req, res) => {
   try {
     const users = await User.find()
     res.json(users)
   } catch (e) {
-    console.log(e)
+    console.log(e, '')
   }
 })
 
 /* method get (get only user with one ID) */
-router.get('/api/users/:id', async (req, res, next) => {
+userRouter.get('/:id', async (req, res, next) => {
   const id = req.params.id
   const productoEncontrado = await User.findById(id)
   if (productoEncontrado) {
@@ -33,19 +29,33 @@ router.get('/api/users/:id', async (req, res, next) => {
 })
 
 /* method post (register)*/
-router.post('/api/users', async (req, res, next) => {
-  const { email, password, names, lastNames, numberPhone, birthday } = req.query
+userRouter.post('/', async (req, res, next) => {
+  const {
+    email,
+    password,
+    cargo,
+    image,
+    names,
+    lastNames,
+    numberPhone,
+    birthday
+  } = req.body
+  const saltRounds = 10
+
+  const passwordHash = await bcrypt.hash(password, saltRounds)
+
   const newUser = new User({
-    password: password,
-    email: email,
-    names: names,
-    lastNames: lastNames,
-    birthday: birthday,
-    numberPhone: numberPhone
+    passwordHash,
+    email,
+    names,
+    lastNames,
+    birthday,
+    numberPhone,
+    cargo,
+    image
   })
 
   try {
-    console.log(newUser, 'userNews')
     const userSaved = await newUser.save()
     res.json(userSaved)
   } catch (err) {
@@ -54,7 +64,7 @@ router.post('/api/users', async (req, res, next) => {
 })
 
 /* method put (update information to user)*/
-router.put('/api/users/:id', async (req, res) => {
+userRouter.put('/:id', async (req, res) => {
   const id = req.params.id
   const {
     email,
@@ -64,7 +74,8 @@ router.put('/api/users/:id', async (req, res) => {
     image,
     lastNames,
     numberPhone,
-    birthday
+    birthday,
+    sede
   } = req.body
   const userUpdated = {
     id: id,
@@ -75,8 +86,25 @@ router.put('/api/users/:id', async (req, res) => {
     birthday: birthday,
     numberPhone: numberPhone,
     image: image,
-    cargo: cargo
+    cargo: cargo,
+    sede: sede
   }
+
+  let token = null
+
+  const authorization = req.get('authorization')
+  if (authorization && authorization.lowerCase().startsWith('bearer')) {
+    token = authorization.substring(7)
+  }
+
+  const decodedToken = jwt.verify(token, 'develop')
+
+  if (!token || decodedToken.id) {
+    return res.status(401).json({
+      error: 'se require tokeen'
+    })
+  }
+
   console.log(userUpdated, 'update')
   User.findByIdAndUpdate(id, userUpdated, { new: true }).then(response =>
     res.json(response)
@@ -84,7 +112,7 @@ router.put('/api/users/:id', async (req, res) => {
 })
 
 /* method put (delete the user)*/
-router.delete('/api/users/:id', async (req, res) => {
+userRouter.delete('/:id', async (req, res) => {
   const id = req.params.id
 
   const userFind = await User.findByIdAndDelete(id)
@@ -92,7 +120,7 @@ router.delete('/api/users/:id', async (req, res) => {
     res
       .status(202)
       .json({
-        status: 'user eliminado!!!!'
+        status: 'user eliminadooo!!!!'
       })
       .end()
   } else {
@@ -100,4 +128,4 @@ router.delete('/api/users/:id', async (req, res) => {
   }
 })
 
-module.exports = router
+module.exports = userRouter
